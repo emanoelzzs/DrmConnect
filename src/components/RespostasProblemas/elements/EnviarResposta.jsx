@@ -5,6 +5,10 @@ export default function EnviarResposta({ id, novaRes }){
     const [description, setDescription] = useState('')
     
     async function responderProblemas() {
+        if(description == ''){
+            alert('coloque algo')
+            return
+        }
         const res = await supabase
         .from('problemas_respostas')
         .insert({
