@@ -1,7 +1,8 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/((?!manutencao.html|_next/static|favicon.ico).*)",
+      "source": "/((?!manutencao.html|assets|favicon.ico|static).*)",
       "destination": "/manutencao.html"
     }
   ]
