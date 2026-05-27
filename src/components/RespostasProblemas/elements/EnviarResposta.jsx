@@ -3,11 +3,10 @@ import { supabase } from "../../../supabase/supabase";
 
 export default function EnviarResposta({ idP, novaRes, quantidadeDeCurtidas }){
     const [description, setDescription] = useState('')
-    const [curtidaLocal, setCurtidaLocal] = useState(0)
     const [qntCurti, setQntCurti] = useState(quantidadeDeCurtidas)
 
     async function curtida() {
-        if(curtidaLocal <= 0){
+        if(localStorage.getItem(idP) == null){
             const enviarCurtida = await supabase.rpc('gerenciar_curtida', {
                 post_id_param: idP,
                 operacao: 'incrementar'
@@ -15,14 +14,14 @@ export default function EnviarResposta({ idP, novaRes, quantidadeDeCurtidas }){
             if(enviarCurtida.error){
                 console.error(enviarCurtida.error.message)
             }
-            setCurtidaLocal(1)
+            localStorage.setItem(idP, idP)
             setQntCurti(qntCurti + 1)
-        } else if(curtidaLocal > 0){
+        } else if(localStorage.getItem(idP) !== null){
             const desCurtir = await supabase.rpc('gerenciar_curtida', {
                 post_id_param: idP,
                 operacao: 'decrementar'
             })
-            setCurtidaLocal(0)
+            localStorage.removeItem(idP)
             setQntCurti(qntCurti - 1)            
         } else{
             console.error()
