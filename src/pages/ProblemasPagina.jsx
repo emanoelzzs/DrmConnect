@@ -41,7 +41,7 @@ export default function ProblemasPagina(){
     }
 
     try{
-      let imgUrlLocal = await envImagensStorage(img)
+      let imgUrlLocal = await envImagensStorage("imagens-problemas", img)
       const { data: { user }, error } = await supabase.auth.getUser()
       if(!user || error){
         alert("usuário não logado!!")
