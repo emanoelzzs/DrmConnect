@@ -22,11 +22,11 @@ export default function RespostasProblemas({ id, curtida }){
 
     useEffect(() => {
         buscarRespostasProblemas()
-    }, [id])
+    }, [id, curtida])
     return(
         <div className="resps">
             {respostas.map((item, index) => (
-                respostas.length <= 0 ? <p>não há soluções</p> : <ul className="lista-respostas"><Resposta key={index} resp={item.description} user={item.user_responde} /></ul>
+                respostas.length <= 0 ? <p>não há soluções</p> : <ul className="lista-respostas"><Resposta key={item.id} resp={item.description} user={item.user_responde} /></ul>
             ))}
             <EnviarResposta idP={id} quantidadeDeCurtidas={curtida} novaRes={buscarRespostasProblemas}/>
         </div>

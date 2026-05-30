@@ -76,11 +76,15 @@ export default function ProblemasPagina(){
         id_user: user.id,
         avatar
       })
-      buscarProblemas()
-      alert("problema enviado!")
-      setImg(null)
-      setTitulo("")
-      setDescricao("")
+      .select()
+      if(!res.error && res.data){
+        setProblemas((postAnteriores) => [res.data[0], ...postAnteriores])
+        setImg(null)
+        setDescricao("")
+        alert("problema enviado!")
+      }
+
+
   }catch(error){
     console.error(error)
   }}

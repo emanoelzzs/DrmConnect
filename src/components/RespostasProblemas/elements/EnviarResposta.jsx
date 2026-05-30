@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../../supabase/supabase";
 
 export default function EnviarResposta({ idP, novaRes, quantidadeDeCurtidas }){
@@ -55,6 +55,10 @@ export default function EnviarResposta({ idP, novaRes, quantidadeDeCurtidas }){
             setDescription('')
         }
     }
+    useEffect(() => {
+        setQntCurti(quantidadeDeCurtidas);
+    }, [idP, quantidadeDeCurtidas]);
+    
     return(
         <>
         <button onClick={() => curtida()}>{qntCurti}</button>
