@@ -8,37 +8,57 @@ import iconImagem from "./../assets/iconImagem.png"
 import "./../styles/formPost.css"
 import { buscarImagem } from "../services/sercheAvatar";
 
+/* ESSA É A PAGINA DE COMUNIDADE */
 export default function ProblemasPagina(){
   const [ problemas, setProblemas ] = useState([])
+  // acima, o estado onde amazena os objetos do posts vindo do banca 
   const [ descricao, setDescricao ] = useState("")
+  // acima, o estado, para a descricao do post
   const [ img, setImg ] = useState(null)
+  // acima, caso o usuario queira imagem no post, fica nesse estado ai
   const [ fotoDoPerfil, setFotoDoPerfil ] = useState("")
+  // acima, link da foto do perfil do usuario vindo do banco
   const textareaRef = useRef(null)
+  // estado usado para se referir a textarea, para a função que ele fica maior quando existe bastante texto
   const [pagina, setPagina] = useState(0)
   const [carregamento, setCarregamento] = useState(false)
   const [temMais, setTemMais] = useState(true)
+  /* acima, são os estados usado para a função de puxar 10 posts por vez,
+  pagina = quando o sistema puxa os primeiros 10, ele vai esta em 0, mas quando ele subir 1, significa pro sistema que tem mais 10 sendo
+  puxados
+  carregamento = controle do carregamento da função de puxar posts
+  temMais = se tiver mais post que ainda n foram vistos, ele fica true, se não, false
+  */
   const irPara = useNavigate()
 
    async function buscarProblemas(estaPagina){
     setCarregamento(true)
-
+    /* Quando ele receber a pagina atual (quantos post devem aparecer) ele faz a seguite conta,
+    a pagina atual * 10, para saber onde o banco deve começar a puxa, e o começo + 10 - 1, onde resultará no numero onde ele deve puxar
+    EX: 
+    estaPagina = 0
+    comeca: 0 * 10 = 0   ate: 0 + 10 - 9 = 9  --> ent ele deve puxar do index 0 ate o 9 (10 posts) 
+    */
     const comeca = estaPagina * 10
     const ate = comeca + 10 - 1
 
     const res = await supabase
     .from('problemas')
     .select('*')
-    .order('create_at', {ascending: false})
-    .range(comeca, ate)
+    .order('create_at', {ascending: false}) // ordenar do mais recente para o mais antigo
+    .range(comeca, ate) // range de post q ele deve puxar, usando as variveis que eu expliquei acima
 
     if(res.error){
       alert("olha o console")
       console.error(res.error)
     } else{
+      // se no data tiver menos que 10 post, temMais se torna false, pois so tem 10 post
       if(res.data.length < 10){
         setTemMais(false)
       }
+      // filtra posts, para evitar post repetitos
       setProblemas((postAnteriores) => {
+        // ele analise os post existente no estado, e ao puxar os novos, se vinher algum repetito (verificado atravez do id) ele tirar o obj
         const postFiltro = res.data.filter(
           (novoPost) => !postAnteriores.some((postAntigo) => postAntigo.id === novoPost.id)
         )
@@ -51,7 +71,7 @@ export default function ProblemasPagina(){
   async function desFazerLogin() {
     const res = supabase.auth.signOut()
   }
-
+// função para criar post
   async function criarProblema() {
     if(descricao == ""){
       alert("escreva algo")
@@ -59,7 +79,9 @@ export default function ProblemasPagina(){
     }
 
     try{
+      // chama função do /services, para joga a imagem que o usuario quer colocar, no bucket do supa
       let imgUrlLocal = await envImagensStorage("imagens-problemas", img)
+      // faz verificação de sessao/usuario para consegui nome de usuario e foto do tal
       const { data: { user }, error } = await supabase.auth.getUser()
       if(!user || error){
         alert("usuário não logado!!")
@@ -77,8 +99,10 @@ export default function ProblemasPagina(){
         avatar
       })
       .select()
+      // quando ele inserir o novo post, ele ja puxa para exibir na tela
       if(!res.error && res.data){
         setProblemas((postAnteriores) => [res.data[0], ...postAnteriores])
+        // limpa inputs
         setImg(null)
         setDescricao("")
         alert("problema enviado!")
@@ -88,15 +112,17 @@ export default function ProblemasPagina(){
   }catch(error){
     console.error(error)
   }}
-
+// função para ver mais posts (se o temMais == true)
   const verMais = () => {
     if(!carregamento && temMais){
+      // ele apenas adiciona mais 1, para o sistema puxar mais 10
       setPagina((paginaAnterio) => paginaAnterio + 1)
     }
   }
 
   useEffect(() => {
     buscarProblemas(pagina)
+    // pega a foto de usuario para exibir para o proprio user
     async function carregarUrlAvatar() {
       const url = await buscarImagem()
       if(url == null || !url ){
@@ -106,27 +132,30 @@ export default function ProblemasPagina(){
       }
     }
     carregarUrlAvatar()
-  }, [pagina])
-  
+  }, [pagina]) // quando o estado pagina for atualizado, ele ja puxa mais 10 post
+  // quando o estado descricao for sendo mudado, ele vai verificando se passa do limite de pixeis
   useEffect(() =>{
     const textarea = textareaRef.current
     if(textarea){
+      // se passar, ele auto redimensionar
       textarea.style.height = 'auto'
       textarea.style.height = `${textarea.scrollHeight}px`
     }
   }, [descricao])
 
   return(
-    <div>
+    <div className="tudo-comunidade">
       <button onClick={() => irPara("/home/seuUser")}>Editar perfil</button>
       <button onClick={() => irPara("/feedback")}>Feedback</button>
       <button onClick={() => irPara("/perguntas")}>Ajuda Drm</button>
       <button onClick={() => desFazerLogin()}>Logout</button>
+
       <div className="form-post">
         <div className="form-text">
           <img src={fotoDoPerfil} style={{width: "30px"}}/>
           <textarea maxLength={200} ref={textareaRef} value={descricao} onChange={e => setDescricao(e.target.value)} placeholder="O que você está pensando hoje?" style={{width: "500px"}}></textarea> <br />
         </div>
+
         <div className="form-envio">
           <input type="file" accept="image/png,image/jpeg" onChange={e => setImg(e.target.files[0])} id="input-file" style={{display: "none"}}/>
           <label htmlFor="input-file"><img src={iconImagem} alt="Icon de imagem" style={{width: "30px", height: "30px", cursor: "pointer"}}/></label>  

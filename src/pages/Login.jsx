@@ -1,12 +1,13 @@
 import { supabase } from "../supabase/supabase"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-
+/* auto explicativo */
 export default function Login(){
     const [ email, setEmail ] = useState("")
     const [ senha, setSenha ] = useState("")
+    //aqui ele vai guarda os estados, para enviar para auth dps
     const irPara = useNavigate()
-
+    // função para logar
      async function logar() {
         const res = await supabase.auth.signInWithPassword({
             email,
@@ -19,8 +20,9 @@ export default function Login(){
             irPara("/Home")
         }
     }
-
+    // função para entrar com o google (codigo dado pelo samuel/sudosam)
     const handleOAuthLogin = async () => {
+        // basicamente ele pega as chaves ja configurada no supabase, e usar dados vindo do google para entrar no site
         const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -33,12 +35,13 @@ export default function Login(){
         });
         if (error) toast.error(error.message);
     };
-
+    // função para envio do email para reseta senha
     async function resetSenha() {
         if(email == " " || email == ""){
             alert("insira seu email!")
             return
         }
+        // aq ele vai enviar pro servidor SMTP enviar um email pre-configurado, com link para alterar a senha
         const res = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo: 'https://problemas.vercel.app/resetSenha'
         })

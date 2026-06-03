@@ -2,15 +2,19 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabase/supabase";
 import { useNavigate } from "react-router-dom";
 import { envImagensStorage } from "../services/uploadImages";
-
+/* ESSA É A PAGINA PARA USUARIO EDITAR SEU PERFIL */
 export default function PaginaDeUsuario(){
     const irPara = useNavigate()
     const [ mudarNome, setMudarNome ] = useState(false)
+    // acima, quando o usuario quiser mudar seu perfil, ele se torna true, se n, false
     const [ nome, setNome ] = useState("")
     const [ urlImg, setUrlImg ] = useState(null)
+    // antes de mudar, o sistema mostra como são sua foto e nome, aq ele guada isso para mudar dps
     const [ img, setImg ] = useState(null)
+    // quando enviar um nova imagem, ele vai guarda aqui  
 
     useEffect(() => {
+        // aqui ele vai buscar o usuario que guadar suas infos para exibir
         async function buscarUser(){
             const { data: { user }, error } = await supabase.auth.getUser()
             if(error){
@@ -25,7 +29,7 @@ export default function PaginaDeUsuario(){
         }
         buscarUser()
     }, [])
-
+    // função para mudar o nome de usuario
     async function mudarNomeDeUsuario() {
         const res = await supabase.auth.updateUser({
             data: { full_name: nome }
@@ -33,17 +37,19 @@ export default function PaginaDeUsuario(){
         if(res.error){
             alert("mudaça n funcionou")
         }else{
+            // quando mudar, ele retorna o user para a home
             alert("nome alterado")
             setMudarNome(false)
             irPara("/home")
         }
     }
-
+    //função para mudar a foto de perfil
     async function mudarFotoDePerfil() {
         if(img == null){
             alert("coloque algo")
             return
         }
+        // joga a imagem para seu butcket e pega a url da tal
         const imgUrl = await envImagensStorage("perfilFotoDefault", img)
         const res = await supabase.auth.updateUser({
             data:{

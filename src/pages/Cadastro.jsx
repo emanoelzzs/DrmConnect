@@ -1,14 +1,16 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "../supabase/supabase"
-
+/* auto explicativo tbm */
 export default function Cadastro(){
     const [ userName, setUserName ] = useState("")
     const [ email, setEmail ] = useState("")
     const [ senha, setSenha ] = useState("")
+    // estado para gurda suas devidas infos
     const irPara = useNavigate()
 
     async function cadastrar() {
+        // aqui eu cadastro o usuario como uma foto padrão
         const res = await supabase.auth.signUp({
             email,
             password: senha,
@@ -22,11 +24,13 @@ export default function Cadastro(){
         if(res.error){
             alert("algo deu errado, volte mais tarde")
         } else{
+            // se der certo, o usuario tem que ir no email verificar sua conta
             alert("verifique seu email!")
         }
     }
-
+    //função de cadastrar com o google (codigo do samuel/sudosam, grato)
     const handleOAuthLogin = async () => {
+         // basicamente ele pega as chaves ja configurada no supabase, e usar dados vindo do google
         const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {

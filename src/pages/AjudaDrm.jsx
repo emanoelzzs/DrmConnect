@@ -3,20 +3,19 @@ import { supabase } from "../supabase/supabase";
 import { Link, useNavigate } from "react-router-dom";
 import Pergunta from "../components/Pergunta";
 import { buscarImagem } from "../services/sercheAvatar";
-
+/* PAGINA DE PERGUNTAS / AJUDADRM */
 export default function AjudaDrm(){
-    const [titulo, setTitulo] = useState("")
-    const [descricao, setDescricao] = useState("")
     const [perguntas, setPerguntas] = useState([])
-    const [imgUrl, setImgUrl] = useState("")
+    // aqui ele amazenar os objetos da perguntas
     const [pagina, setPagina] = useState(0)
     const [carregamento, setCarregamento] = useState(false)
     const [temMais, setTemMais] = useState(true)
+    // usa o mesmo sistema de puxar 10 pergunta (mais explicaçao no ProblemasPaginga.jsx)
     const irPara = useNavigate()
 
     async function buscarPerguntas(estaPagina) {
         setCarregamento(true)
-
+        //mais explicaçao no ProblemasPaginga.jsx
         const comeca = estaPagina * 10
         const ate = comeca + 10 - 1        
         const res = await supabase
@@ -40,7 +39,7 @@ export default function AjudaDrm(){
         }
         setCarregamento(false)
     }
-
+    // mais explicaçao no ProblemasPaginga.jsx
     const verMais = () => {
         if(!carregamento && temMais){
         setPagina((paginaAnterio) => paginaAnterio + 1)
@@ -49,9 +48,10 @@ export default function AjudaDrm(){
 
     useEffect(() => {
         buscarPerguntas(pagina)
-        setImgUrl(buscarImagem())
-    }, [pagina])
+    }, [pagina]) // mais explicaçao no ProblemasPaginga.jsx
 
+
+    // na linha 64, quando ele clicar na pergunta ele vai ser jogar para o componente da pergunta, e la, ele vai puxa a pegunta com o id da url
     return(
         <div className="ajudadrm-tudo">
             <div className="enviar-pergunta">
