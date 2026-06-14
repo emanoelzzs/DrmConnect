@@ -60,7 +60,7 @@ export default function AjudaDrm(){
             <div className="form-ajuda">
             <div className="enviar-pergunta">
                 <h3>Crie um pergunta</h3>
-                <button onClick={() => irPara("/criarpergunta")}>+</button>
+                <button onClick={() => irPara("/criarpergunta")}>Criar</button>
             </div>
             <div className="perguntas">
                 {perguntas.map((item) => (
