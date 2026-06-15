@@ -45,8 +45,10 @@ export default function CriarPergunta(){
 
     return(
         <div className="criarPergunta">
-            <h1>Criar Pergunta</h1>
-
+                <h1>Criar Pergunta</h1>
+            <div className="barraLogo">
+                <span className="barraEsquerda"><hr /></span> <img src="" alt="" /><span className="barraDireita"><hr /></span>
+            </div>
             <div className="criarPergunta-entrada">
                 <input type="text" placeholder="insira o Titulo" value={titulo} onChange={e => setTitulo(e.target.value)}/> <br />
                 <textarea maxLength={200} ref={textareaRef} value={descricao} onChange={e => setDescricao(e.target.value)} placeholder="O que você está pensando hoje?"></textarea>
