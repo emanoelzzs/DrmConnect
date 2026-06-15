@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../../supabase/supabase";
+import { Heart } from 'lucide-react';
+import "../style.css"
 
 export default function EnviarResposta({ idP, novaRes, quantidadeDeCurtidas }){
     const [description, setDescription] = useState('')
@@ -61,7 +63,9 @@ export default function EnviarResposta({ idP, novaRes, quantidadeDeCurtidas }){
     
     return(
         <>
-        <button onClick={() => curtida()}>{qntCurti}</button>
+        <button onClick={() => curtida()}>
+            {qntCurti < 1 ? <Heart  /> : <Heart color="#000" fill="#e20000" /> }
+            </button>
         <input type="text" value={description} onChange={e => setDescription(e.target.value)} placeholder="Digite sua resposta"/>
         <button onClick={() => responderProblemas()}>Enviar</button>
         </>
